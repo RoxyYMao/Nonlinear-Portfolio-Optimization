@@ -1,0 +1,42 @@
+---
+title: "Portfolio Write Up"
+date: "11/17/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+First we need to establish a connection to our database and read the (x,y) values
+from the **portfolio** table.
+```{r, include=TRUE, warning=FALSE}
+library(RMySQL)
+library(reshape2)
+
+# Connect to MySQL
+db <- RMySQL::dbConnect( RMySQL::MySQL(),
+                         dbname = 'nasdaq',
+                         username = 'root',
+                         password = 'root')
+
+queryPort <- "select expReturn,expRisk from portfolio;"
+port2 <- dbFetch(dbSendQuery(db, queryPort))
+```
+
+
+Next, we use ggplot to generate a graph of our values with Portfolio's expected
+return on the x-axis and the expected risk on the y-axis.
+
+```{r, include=TRUE}
+# plot the values
+library(ggplot2)
+ggplot(port2, aes(x = expReturn, y = expRisk)) + 
+  geom_point(size = 4, color = "steelblue", shape = 18) +
+  ggtitle("Relationship Between a Portfolio's Return and Risk") +
+  xlab("Expected Return (%)") + ylab("Expected Risk (%)")
+
+```
+As can be clearly seen from the graph plotted that as risk increases so too does the returns. This makes perfect sense considering this is how stocks are high risk high reward, low risk low reward. 
+
+%>% 
